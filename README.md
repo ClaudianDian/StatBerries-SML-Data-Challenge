@@ -17,9 +17,7 @@ Kami adalah **Kelompok STATBERRIES** dari mata kuliah *Statistical Machine Learn
 ---
 
 ## 📌 Deskripsi Singkat
-> Kami menganalisis [judul topik/tema] menggunakan pendekatan Statistical Machine Learning.  
-> Tujuan utama dari proyek ini adalah [singkatkan tujuan proyek kalian dalam 1-2 kalimat].
-
+Data yang digunakan pada studi kasus ini adalah data layanan kesehatan ibu dan anak tahun 2022. Studi ini bertujuan untuk memetakan potensi risiko konvergensi rendah pada tingkat desa. Hasil prediksi ini diharapkan dapat menjadi alat bantu pengambilan keputusan dalam mendukung program nasional percepatan penurunan stunting.
 ---
 
 ## 📁 Struktur Proyek
