@@ -1,9 +1,18 @@
-# 🍓 SML DATA CHALLENGE - STATBERRIES
 
-Selamat datang di repositori proyek kami!  
-Kami adalah **Kelompok STATBERRIES** dari mata kuliah *Statistical Machine Learning*, dan ini adalah kontribusi kami untuk **SML Data Challenge**.
+<p align="center">
+  <img width="1000" height="300" src="Image/logo-ipb.png">
+</p>
 
+<div align="center">
+
+# 🍓 DATA SCIENCE CHALLENGE - STATBERRIES 🍓
 ---
+# PREDIKSI RISIKO RENDAHNYA KONVERGENSI IBU ANAK UNTUK PENANGGULANGAN STUNTING
+---
+
+[Tentang](#clipboard-Tentang) - [Deskripsi Proyek](#camera-Screenshot) - [Demo dan Alur Proyek](#card_file_box-Demo) - [Team](#star2-Team)
+
+## :clipboard: Tentang
 
 ## 👥 Anggota Kelompok
 
