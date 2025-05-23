@@ -10,7 +10,7 @@
 # PREDIKSI RISIKO RENDAHNYA KONVERGENSI IBU ANAK UNTUK PENANGGULANGAN STUNTING
 ---
 
-[Tentang](#clipboard-Tentang) - [Demo dan Alur Proyek](#card_index_dividers-Demo) - [Team](#busts_in_silhouette-Team)
+[Tentang](#clipboard-Tentang) - [Proyek](#card_index_dividers-Proyek) - [Diagram Alir](#jigsaw-Diagram-Alir) - [Team](#busts_in_silhouette-Team)
 </div>
 
 ## :clipboard: Tentang
@@ -26,8 +26,13 @@ Proyek ini bertujuan untuk mengembangkan sistem prediksi risiko rendahnya tingka
 3. Visualisasi Interaktif: Menyajikan hasil analisis dalam bentuk visualisasi dashboard HTML yang mudah dipahami.
 4. Pendukung Kebijakan: Memberikan output yang aplikatif sebagai bahan pertimbangan dalam perencanaan dan evaluasi program intervensi stunting oleh pemerintah daerah atau pusat.
 
-## :card_index_dividers: Demo dan Alur Proyek
+## :card_index_dividers: Proyek
 ### 
+
+## :jigsaw: Diagram Alir
+<p align="center">
+  <img width="900" height="500" src="Image/Blank diagram.png">
+</p>
 
 ## :busts_in_silhouette: Team
 
