@@ -65,8 +65,14 @@ Grafik EDA dapat ditemukan pada folder EDA di repository ini.
 
 ## :computer: Modeling
 ### Pembagian Data
-- Data dibagi menggunakan proporsi 80% data latih dan 20% data uji.
-- Setiap model dilatih hanya pada data latih, lalu dievaluasi menggunakan data uji.
+Dalam proses pelatihan dan pengujian model, digunakan dua skema pembagian data untuk mengevaluasi stabilitas dan keandalan performa model klasifikasi :  
+**1. Skema 80:20**
+ - 80% data latih digunakan untuk membangun model
+ - 20% data uji digunakan untuk mengevaluasi performa generalisasi model
+
+**2. Skema 70:30**
+ - 70% data latih digunakan untuk membangun model
+ - 30% data uji digunakan untuk mengevaluasi performa generalisasi model
 ### Preprocessing Data
 - Winsorizing diterapkan untuk membatasi pengaruh outlier ekstrim. Nilai-nilai ekstrim dari setiap variabel numerik dipotong pada persentil bawah dan atas.
 - Data bersifat imbalanced sehingga digunakan metode SMOTE (Synthetic Minority Over-sampling Technique) pada data latih.
