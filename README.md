@@ -58,17 +58,18 @@ Heatmap korelasi mengindikasikan adanya korelasi sedang hingga kuat antar indika
 </p>
 Grafik EDA dapat ditemukan pada folder EDA di repository ini.
 
-
-
-
-
-
 ## :jigsaw: Diagram Alir
 <p align="center">
   <img width="900" height="500" src="Image/Blank diagram.png">
 </p>
 
 ## :computer: Modeling
+### Pembagian Data
+- Data dibagi menggunakan proporsi 80% data latih dan 20% data uji.
+- Setiap model dilatih hanya pada data latih, lalu dievaluasi menggunakan data uji.
+### Preprocessing Data
+- Winsorizing diterapkan untuk membatasi pengaruh outlier ekstrim. Nilai-nilai ekstrim dari setiap variabel numerik dipotong pada persentil bawah dan atas.
+- Data bersifat imbalanced sehingga digunakan metode SMOTE (Synthetic Minority Over-sampling Technique) pada data latih.
 
 ## :bar_chart: Evaluasi
 
