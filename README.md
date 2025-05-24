@@ -53,6 +53,9 @@ Boxplot per kategori stunting_risk memperlihatkan perbedaan distribusi yang sign
 2. Desa risiko **tinggi** menunjukkan lebih banyak nilai rendah atau nol, menunjukkan **kesenjangan layanan**
 #### Korelasi Antar Variabel
 Heatmap korelasi mengindikasikan adanya korelasi sedang hingga kuat antar indikator layanan dasar yang memiliki jenis layanan serupa, misalnya korelasi positif antara Bumil_cek_4kali dan Bumil_Konseling_Gizi_4kali.  
+<p align="center">
+  <img width="900" height="500" src="EDA/Korelasi.png">
+</p>
 
 Grafik EDA dapat ditemukan pada folder EDA di repository ini.
 
