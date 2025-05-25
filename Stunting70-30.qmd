@@ -1,0 +1,711 @@
+---
+title: "sml-uas"
+author: "Kelompok-2"
+format: 
+  html:
+    embed-resources: true
+    toc: true
+    self-contained: true
+    editor: visual
+---
+
+# Library
+
+```{r}
+
+library(readxl)
+library(dplyr)
+library(caret)
+library(ggplot2)
+library(tidyr) 
+library(corrplot)
+library(gridExtra)
+library(class)
+library(C50)
+library(rpart)
+library(rpart.plot)
+library(smotefamily)
+library(tidyverse)
+```
+
+# Data
+
+```{r}
+data_stunting_2022 <- read_excel("C:/Users/ASUS/Downloads/Kelompok 2 -data stunting 2022.xlsx")
+
+data_jawa <- data_stunting_2022 %>%
+  filter(NAMA_PROVINSI %in% c("JAWA BARAT", "JAWA TENGAH", "JAWA TIMUR",
+                              "BANTEN", "DKI JAKARTA", "DI YOGYAKARTA"))
+
+data_jawa <- data_jawa %>%
+  mutate(
+    konvergensi_numeric = as.numeric(gsub("%", "", Konvergensi_Anak_)),
+    stunting_risk = ifelse(!is.na(konvergensi_numeric) & konvergensi_numeric < 70, "rendah", "tinggi"),
+    stunting_risk = as.factor(stunting_risk)
+  ) %>%
+  filter(!is.na(stunting_risk)) 
+
+#fitur
+fitur <- dplyr::select(
+  data_jawa,
+  stunting_risk,
+  RT_1.000_HPK_, Ibu_Hamil, `Usia_Anak_0-23-Bln_`,
+  Bumil_cek_4kali_, Bumil_Pil_FE_, Bumil_NIFAS_3kali, Bumil_Konseling_Gizi_4kali,
+  Bumil_KEK, Bumil_KEK_Kunjungan, Bumil_RESTI, Bumil_RESTI_Kunjungan,
+  Bumil_Air_Minum_Aman, Bumil_Jamban_Layak, Bumil_JamKes,
+  Anak_Imunisasi, Anak_Timbang_Rutin, Anak_Ukur_Panjang,
+  Pengasuh_Laki, Pengasuh_Pr,
+  Jlh_Kunjungan_Gizi_Brk, Jlh_Kunjungan_Gizi_Krg_, Jlh_Kunjungan_Ank_Stunting,
+  Jlh_Anak_Air_Minum_Aman, Jlh_Anak_Jamban_Layak, Jlh_Anak_JamKes,
+  Jlh_Anak_Punya_Akta_Lahir, Jlh_Pengasuh_Ikut_Parenting,
+  `Jlh_Anak_2-6Tahun_`, `Jlh_Anak_2-6Tahun_Aktif_Paud_`  # masih dipakai, tapi bisa dipantau
+)
+```
+
+# EDA
+
+```{r}
+table(fitur$stunting_risk)
+prop.table(table(fitur$stunting_risk)) * 100
+
+
+#Distribusi Variabel
+fitur %>%
+  dplyr::select(-stunting_risk) %>%
+  pivot_longer(cols = everything(), names_to = "variabel", values_to = "nilai") %>%
+  ggplot(aes(x = nilai)) +
+  facet_wrap(~ variabel, scales = "free", ncol = 4) +
+  geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+  theme_minimal() +
+  labs(title = "Distribusi Semua Variabel Numerik")
+```
+
+```{r}
+ggplot(fitur, aes(x = stunting_risk)) +
+  geom_bar(fill = "tomato") +
+  labs(title = "Distribusi Risiko Stunting di Pulau Jawa (2022)",
+       x = "Kategori Risiko", y = "Jumlah Desa") +
+  theme_minimal()
+
+```
+
+```{r}
+
+
+# Daftar fitur divisualisasikan
+selected_features_vis <- c(
+  "Anak_Timbang_Rutin", "Jlh_Anak_Air_Minum_Aman", "Jlh_Anak_JamKes", "Anak_Imunisasi",
+  "Anak_Ukur_Panjang", "Jlh_Anak_Punya_Akta_Lahir", "Jlh_Anak_Jamban_Layak", "RT_1.000_HPK_",
+  "Pengasuh_Laki", "Bumil_NIFAS_3kali", "Bumil_Konseling_Gizi_4kali",
+  "Jlh_Pengasuh_Ikut_Parenting", "Jlh_Kunjungan_Ank_Stunting", "Bumil_RESTI_Kunjungan"
+)
+
+
+if (!dir.exists("boxplot_stunting")) dir.create("boxplot_stunting")
+
+# Loop simpan boxplot per fitur
+for (f in selected_features_vis) {
+  p <- ggplot(fitur, aes(x = stunting_risk, y = .data[[f]], fill = stunting_risk)) +
+    geom_boxplot(outlier.size = 1) +
+    labs(
+      title = paste("Distribusi", f, "berdasarkan Risiko Stunting"),
+      x = "Stunting Risk", y = f
+    ) +
+    theme_minimal(base_size = 14)
+
+  print(p)
+}
+
+```
+
+```{r}
+#Korelasi antar variabel
+corr_data <- fitur %>%
+  dplyr::select(-stunting_risk) %>%
+  cor(use = "complete.obs")
+corrplot(corr_data, method = "color", tl.cex = 0.7, number.cex = 0.6)
+```
+
+```{r}
+#Outlier 
+fitur %>%
+  pivot_longer(cols = -stunting_risk, names_to = "variabel", values_to = "nilai") %>%
+  ggplot(aes(x = stunting_risk, y = nilai)) +
+  geom_boxplot(fill = "lightblue") +
+  facet_wrap(~ variabel, scales = "free", ncol = 4) +
+  theme_minimal() +
+  labs(title = "Boxplot Semua Variabel Numerik")
+
+colSums(is.na(fitur))
+```
+
+
+```{r}
+# Split data dahulu (sebelum winsorizing)
+set.seed(2025)
+split_index <- createDataPartition(fitur$stunting_risk, p = 0.7, list = FALSE)
+train_data <- fitur[split_index, ]
+test_data  <- fitur[-split_index, ]
+
+# Ambil hanya kolom numerik
+train_num <- train_data %>% select(where(is.numeric))
+test_num  <- test_data %>% select(where(is.numeric))
+
+# Hitung quantile batas outlier dari data training
+lower_qnt <- apply(train_num, 2, quantile, probs = 0.01, na.rm = TRUE)
+upper_qnt <- apply(train_num, 2, quantile, probs = 0.99, na.rm = TRUE)
+
+# Fungsi winsorizing berdasarkan batas
+winsorize_from_bounds <- function(x, low, high) {
+  x[x < low] <- low
+  x[x > high] <- high
+  return(x)
+}
+
+# Terapkan winsorizing ke train dan test secara aman
+for (var in names(train_num)) {
+  train_data[[var]] <- winsorize_from_bounds(train_data[[var]], lower_qnt[var], upper_qnt[var])
+  test_data[[var]]  <- winsorize_from_bounds(test_data[[var]], lower_qnt[var], upper_qnt[var])
+}
+
+```
+
+
+```{r}
+# Visualisasi winsorizing
+train_data %>%
+  pivot_longer(-stunting_risk, names_to = "variabel", values_to = "nilai") %>%
+  ggplot(aes(x = stunting_risk, y = nilai)) +
+  facet_wrap(~ variabel, scales = "free", ncol = 4) +
+  geom_boxplot(fill = "skyblue", alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Boxplot Sesudah Winsorizing (Train Data)")
+
+```
+
+
+# Regresi Logistik
+
+## Regresi Logistik Full Fitur
+
+```{r}
+model_logit <- glm(stunting_risk ~ ., data = train_data, family = binomial)
+summary(model_logit)
+
+# Prediksi & evaluasi
+prob_pred <- predict(model_logit, newdata = test_data, type = "response")
+class_pred <- ifelse(prob_pred > 0.5, "tinggi", "rendah")
+cm_reglog <- confusionMatrix(as.factor(class_pred), test_data$stunting_risk)
+cm_reglog
+```
+
+## Reg Log 14 Fitur
+
+```{r}
+selected_features_top14 <- c("Anak_Timbang_Rutin", "Jlh_Anak_Air_Minum_Aman", 
+                       "Jlh_Anak_JamKes", "Anak_Imunisasi", "Anak_Ukur_Panjang", 
+                       "Jlh_Anak_Punya_Akta_Lahir", "Jlh_Anak_Jamban_Layak", "RT_1.000_HPK_", 
+                       "Pengasuh_Laki", "Bumil_NIFAS_3kali", "Bumil_Konseling_Gizi_4kali", 
+                       "Jlh_Pengasuh_Ikut_Parenting", "Jlh_Kunjungan_Ank_Stunting", "Bumil_RESTI_Kunjungan")
+# Subset data
+train_logit_14 <- train_data[, c(selected_features_top14, "stunting_risk")]
+test_logit_14  <- test_data[, c(selected_features_top14, "stunting_risk")]
+
+# Model
+model_logit_14 <- glm(stunting_risk ~ ., data = train_logit_14, family = binomial)
+
+# Prediksi & evaluasi
+prob_logit_14 <- predict(model_logit_14, newdata = test_logit_14, type = "response")
+class_logit_14 <- ifelse(prob_logit_14 > 0.5, "tinggi", "rendah")
+class_logit_14 <- factor(class_logit_14, levels = levels(test_logit_14$stunting_risk))
+
+# Confusion Matrix
+cm_logit_14 <- confusionMatrix(class_logit_14, test_logit_14$stunting_risk)
+print(cm_logit_14)
+
+```
+
+# KNN 
+
+## KNN Full Fitur
+
+```{r}
+# Normalisasi fitur: min-max scaling
+normalize <- function(x) {
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+numeric_vars <- names(train_data)[sapply(train_data, is.numeric) & names(train_data) != "konvergensi_numeric"]
+
+train_normalized <- train_data
+test_normalized <- test_data
+
+train_normalized[numeric_vars] <- lapply(train_data[numeric_vars], normalize)
+test_normalized[numeric_vars] <- lapply(test_data[numeric_vars], normalize)
+
+
+train_knn <- train_normalized
+test_knn <- test_normalized
+
+
+#CV
+ctrl <- trainControl(method = "cv", number = 5)
+grid <- expand.grid(k = seq(3, 21, 2))  
+
+# Latih model KNN
+set.seed(2025)
+model_knn_cv <- train(
+  stunting_risk ~ .,
+  data = train_knn,
+  method = "knn",
+  trControl = ctrl,
+  tuneGrid = grid
+)
+
+# Lihat hasil k terbaik
+print(model_knn_cv)
+plot(model_knn_cv)
+
+
+pred_knn_cv <- predict(model_knn_cv, newdata = test_knn)
+conf_knn_cv <- confusionMatrix(pred_knn_cv, test_knn$stunting_risk)
+print(conf_knn_cv)
+```
+
+## KNN 14 Fitur
+
+```{r}
+# Normalisasi fitur: min-max scaling
+normalize <- function(x) {
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+train_knn_14 <- train_data %>%
+  select(all_of(selected_features_top14), stunting_risk) %>%
+  mutate(across(where(is.numeric), normalize))
+
+test_knn_14 <- test_data %>%
+  select(all_of(selected_features_top14), stunting_risk) %>%
+  mutate(across(where(is.numeric), normalize))
+
+
+#CV
+ctrl_14 <- trainControl(method = "cv", number = 5)
+grid_14 <- expand.grid(k = seq(3, 21, 2))  
+
+# Latih model KNN
+set.seed(2025)
+model_knn_cv_14 <- train(
+  stunting_risk ~ .,
+  data = train_knn_14,
+  method = "knn",
+  trControl = ctrl_14,
+  tuneGrid = grid_14
+)
+
+# Lihat hasil k terbaik
+print(model_knn_cv_14)
+plot(model_knn_cv_14)
+
+pred_knn_cv_14 <- predict(model_knn_cv_14, newdata = test_knn_14)
+conf_knn_cv_14 <- confusionMatrix(pred_knn_cv_14, test_knn_14$stunting_risk)
+print(conf_knn_cv_14)
+
+```
+
+# C50
+
+## C50 FULL FITUR
+
+```{r}
+#model
+model_c50_full <- C5.0(stunting_risk ~ ., data = train_data)
+
+# Prediksi
+pred_c50_full <- predict(model_c50_full, newdata = test_data)
+
+#evaluasi
+conf_c50_full <- confusionMatrix(pred_c50_full, test_data$stunting_risk)
+print(conf_c50_full)
+
+```
+
+## C50 14 fitur
+
+```{r}
+train_c50_14 <- train_data[, c(selected_features_top14, "stunting_risk")]
+test_c50_14  <- test_data[, c(selected_features_top14, "stunting_risk")]
+
+# Latih model
+model_c50_14 <- C5.0(stunting_risk ~ ., data = train_c50_14)
+
+# Prediksi 
+pred_c50_14 <- predict(model_c50_14, newdata = test_c50_14)
+
+# Evaluasi 
+conf_c50_14 <- confusionMatrix(pred_c50_14, test_c50_14$stunting_risk)
+print(conf_c50_14)
+
+```
+
+# EVALUASI
+
+```{r}
+get_model_metrics <- function(cm, model_name) {
+  data.frame(
+    Model = model_name,
+    Accuracy = cm$overall["Accuracy"],
+    F1_Score = cm$byClass["F1"],
+    Kappa = cm$overall["Kappa"],
+    Balanced_Accuracy = cm$byClass["Balanced Accuracy"]
+  )
+}
+
+```
+
+```{r}
+evaluasi_semua <- bind_rows(
+  get_model_metrics(conf_c50_full, "C5.0 (Full)"),
+  get_model_metrics(cm_reglog, "Logistic (Full)"),
+  get_model_metrics(conf_knn_cv, "KNN (Full)"),
+  get_model_metrics(conf_c50_14, "C5.0 (14 Fitur)"),
+  get_model_metrics(cm_logit_14, "Logistic (14 Fitur)"),
+  get_model_metrics(conf_knn_cv_14, "KNN (14 Fitur)")
+) %>%
+  mutate(Fitur = ifelse(grepl("14", Model), "14 Fitur", "Full Fitur"))
+print(evaluasi_semua)
+
+```
+
+
+## Visualisasi
+
+```{r}
+evaluasi_semua <- evaluasi_semua %>%
+  mutate(Fitur = ifelse(grepl("14", Model), "14 Fitur", "Full Fitur"))
+evaluasi_long <- pivot_longer(
+  evaluasi_semua,
+  cols = c("Accuracy", "F1_Score"),
+  names_to = "Metric",
+  values_to = "Value"
+)
+
+```
+
+
+
+```{r}
+# Akurasi - Full
+evaluasi_long %>%
+  filter(Fitur == "Full Fitur", Metric == "Accuracy") %>%
+  ggplot(aes(x = Model, y = Value, fill = Model)) +
+  geom_col() +
+  geom_text(aes(label = round(Value, 3)), vjust = -0.5, size = 4.5) +
+  labs(title = "Akurasi Model - Full Fitur", x = "Model", y = "Akurasi") +
+  theme_minimal()
+
+# F1-Score - Full
+evaluasi_long %>%
+  filter(Fitur == "Full Fitur", Metric == "F1_Score") %>%
+  ggplot(aes(x = Model, y = Value, fill = Model)) +
+  geom_col() +
+  geom_text(aes(label = round(Value, 3)), vjust = -0.5, size = 4.5) +
+  labs(title = "F1-Score Model - Full Fitur", x = "Model", y = "F1-Score") +
+  theme_minimal()
+
+```
+
+
+```{r}
+# Akurasi - 14 Fitur
+evaluasi_long %>%
+  filter(Fitur == "14 Fitur", Metric == "Accuracy") %>%
+  ggplot(aes(x = Model, y = Value, fill = Model)) +
+  geom_col() +
+  geom_text(aes(label = round(Value, 3)), vjust = -0.5, size = 4.5) +
+  labs(title = "Akurasi Model - 14 Fitur", x = "Model", y = "Akurasi") +
+  theme_minimal()
+
+# F1-Score - 14 Fitur
+evaluasi_long %>%
+  filter(Fitur == "14 Fitur", Metric == "F1_Score") %>%
+  ggplot(aes(x = Model, y = Value, fill = Model)) +
+  geom_col() +
+  geom_text(aes(label = round(Value, 3)), vjust = -0.5, size = 4.5) +
+  labs(title = "F1-Score Model - 14 Fitur", x = "Model", y = "F1-Score") +
+  theme_minimal()
+
+```
+
+
+
+```{r}
+ggplot(evaluasi_long, aes(x = Model, y = Value, fill = Metric)) +
+  geom_col(position = "dodge") +
+  geom_text(aes(label = round(Value, 3)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 4) +
+  facet_grid(rows = vars(Metric), cols = vars(Fitur), scales = "free_x") +
+  labs(title = "Perbandingan Akurasi dan F1-Score Berdasarkan Jumlah Fitur",
+       x = "Model", y = "Skor Evaluasi") +
+  theme_minimal(base_size = 13)
+
+
+```
+
+```{r}
+evaluasi_long_kb <- evaluasi_semua %>%
+  select(Model, Fitur, Kappa, Balanced_Accuracy) %>%
+  pivot_longer(cols = c("Kappa", "Balanced_Accuracy"),
+               names_to = "Metric", values_to = "Value")
+ggplot(evaluasi_long_kb, aes(x = Model, y = Value, fill = Metric)) +
+  geom_col(position = "dodge") +
+  geom_text(aes(label = round(Value, 3)),
+            position = position_dodge(width = 0.9),
+            vjust = -0.5, size = 4) +
+  facet_grid(rows = vars(Metric), cols = vars(Fitur), scales = "free_x") +
+  labs(title = "Perbandingan Kappa dan Balanced Accuracy Berdasarkan Jumlah Fitur",
+       x = "Model", y = "Nilai Evaluasi") +
+  theme_minimal(base_size = 13)
+
+
+
+```
+
+
+
+# SMOTE
+
+## prepocessing
+full fitur
+```{r}
+library(smotefamily)
+train_data$stunting_label <- ifelse(train_data$stunting_risk == "tinggi", 1, 0)
+
+
+X_train_full <- train_data %>% select(-stunting_risk, -stunting_label)
+y_train_full <- train_data$stunting_label
+
+set.seed(2025)
+smote_full <- SMOTE(X_train_full, y_train_full, K = 5)
+
+train_smote_full <- smote_full$data
+train_smote_full$stunting_risk <- factor(ifelse(train_smote_full$class == 1, "tinggi", "rendah"))
+train_smote_full$class <- NULL
+
+```
+
+14 fitur
+```{r}
+X_train_14 <- train_data %>% select(all_of(selected_features_top14))
+y_train_14 <- train_data$stunting_label  # sudah dibuat sebelumnya
+
+
+set.seed(2025)
+smote_14 <- SMOTE(X_train_14, y_train_14, K = 5)
+
+
+train_smote_14 <- smote_14$data
+train_smote_14$stunting_risk <- factor(ifelse(train_smote_14$class == 1, "tinggi", "rendah"))
+train_smote_14$class <- NULL
+
+
+# Siapkan data uji untuk 14 fitur
+test_14 <- test_data %>%
+  select(all_of(selected_features_top14), stunting_risk)
+
+```
+
+# Reglog
+## Reglog SMOTE-full
+```{r}
+model_logit_smote_full <- glm(stunting_risk ~ ., data = train_smote_full, family = binomial)
+prob_logit_smote_full <- predict(model_logit_smote_full, newdata = test_data, type = "response")
+class_logit_smote_full <- factor(ifelse(prob_logit_smote_full > 0.5, "tinggi", "rendah"),
+                                 levels = levels(test_data$stunting_risk))
+conf_logit_smote_full <- confusionMatrix(class_logit_smote_full, test_data$stunting_risk)
+print(conf_logit_smote_full)
+
+```
+## Reglo smote 14 fitur
+```{r}
+model_logit_smote_14 <- glm(stunting_risk ~ ., data = train_smote_14, family = binomial)
+
+prob_logit_smote_14 <- predict(model_logit_smote_14, newdata = test_14, type = "response")
+class_logit_smote_14 <- factor(ifelse(prob_logit_smote_14 > 0.5, "tinggi", "rendah"),
+                               levels = levels(test_14$stunting_risk))
+
+conf_logit_smote_14 <- confusionMatrix(class_logit_smote_14, test_14$stunting_risk)
+print(conf_logit_smote_14)
+
+```
+
+
+# KNN
+## KNN smote full
+```{r}
+train_knn_smote_full <- train_smote_full
+test_knn_smote_full <- test_data
+
+numeric_vars <- names(train_knn_smote_full)[sapply(train_knn_smote_full, is.numeric)]
+
+train_knn_smote_full[numeric_vars] <- lapply(train_knn_smote_full[numeric_vars], normalize)
+test_knn_smote_full[numeric_vars] <- lapply(test_knn_smote_full[numeric_vars], normalize)
+
+# Latih KNN
+model_knn_smote_full <- train(
+  stunting_risk ~ .,
+  data = train_knn_smote_full,
+  method = "knn",
+  trControl = trainControl(method = "cv", number = 5),
+  tuneGrid = expand.grid(k = seq(3, 21, 2))
+)
+
+pred_knn_smote_full <- predict(model_knn_smote_full, newdata = test_knn_smote_full)
+conf_knn_smote_full <- confusionMatrix(pred_knn_smote_full, test_data$stunting_risk)
+print(conf_knn_smote_full)
+
+```
+
+## KNN SMOTE 14 Fitur
+
+```{r}
+train_knn_smote_14 <- train_smote_14 %>%
+  mutate(across(where(is.numeric), normalize))
+
+test_knn_smote_14 <- test_data %>%
+  select(all_of(selected_features_top14), stunting_risk) %>%
+  mutate(across(where(is.numeric), normalize))
+
+# Latih KNN
+model_knn_smote_14 <- train(
+  stunting_risk ~ .,
+  data = train_knn_smote_14,
+  method = "knn",
+  trControl = trainControl(method = "cv", number = 5),
+  tuneGrid = expand.grid(k = seq(3, 21, 2))
+)
+
+pred_knn_smote_14 <- predict(model_knn_smote_14, newdata = test_knn_smote_14)
+conf_knn_smote_14 <- confusionMatrix(pred_knn_smote_14, test_knn_smote_14$stunting_risk)
+print(conf_knn_smote_14)
+
+```
+
+# C50
+
+## C50 SMOTE FULL
+```{r}
+model_c50_smote_full <- C5.0(stunting_risk ~ ., data = train_smote_full)
+pred_c50_smote_full <- predict(model_c50_smote_full, newdata = test_data)
+conf_c50_smote_full <- confusionMatrix(pred_c50_smote_full, test_data$stunting_risk)
+print(conf_c50_smote_full)
+
+```
+
+
+
+## C50 SMOTE 14 Fitur
+```{r}
+model_c50_smote_14 <- C5.0(stunting_risk ~ ., data = train_smote_14)
+
+test_14 <- test_data %>% select(all_of(selected_features_top14), stunting_risk)
+pred_c50_smote_14 <- predict(model_c50_smote_14, newdata = test_14)
+
+conf_c50_smote_14 <- confusionMatrix(pred_c50_smote_14, test_14$stunting_risk)
+print(conf_c50_smote_14)
+
+```
+
+
+
+# EvALUASI
+```{r}
+
+evaluasi_smote <- bind_rows(
+  get_model_metrics(conf_c50_smote_full, "C5.0 (SMOTE Full)"),
+  get_model_metrics(conf_logit_smote_full, "Logistic (SMOTE Full)"),
+  get_model_metrics(conf_knn_smote_full, "KNN (SMOTE Full)"),
+  get_model_metrics(conf_c50_smote_14, "C5.0 (SMOTE 14)"),
+  get_model_metrics(conf_logit_smote_14, "Logistic (SMOTE 14)"),
+  get_model_metrics(conf_knn_smote_14, "KNN (SMOTE 14)")
+) %>%
+  mutate(Fitur = ifelse(grepl("14", Model), "14 Fitur", "Full Fitur"),
+         SMOTE = "Ya")  # menandai ini adalah model SMOTE
+
+print(evaluasi_smote)
+```
+```{r}
+evaluasi_non_smote <- evaluasi_semua %>%
+  mutate(SMOTE = "Tidak")
+evaluasi_semua_final <- bind_rows(evaluasi_non_smote, evaluasi_smote)
+ print(evaluasi_semua_final)
+```
+
+```{r}
+evaluasi_long_all <- evaluasi_semua_final %>%
+  pivot_longer(cols = c("Accuracy", "F1_Score", "Kappa", "Balanced_Accuracy"),
+               names_to = "Metric", values_to = "Value")
+ggplot(evaluasi_long_all, aes(x = Model, y = Value, fill = SMOTE)) +
+  geom_col(position = "dodge") +
+  geom_text(aes(label = round(Value, 3)),
+            position = position_dodge(width = 0.9),
+            vjust = -0.5, size = 3.5) +
+  facet_grid(rows = vars(Metric), cols = vars(Fitur), scales = "free_x") +
+  labs(title = "Evaluasi Semua Model (SMOTE vs Non-SMOTE)",
+       x = "Model", y = "Nilai Evaluasi") +
+  theme_minimal(base_size = 13)
+
+
+```
+
+
+```{r}
+plot_cm_heatmap <- function(cm, title_text) {
+  cm_df <- as.data.frame(cm$table)
+  ggplot(cm_df, aes(x = Reference, y = Prediction, fill = Freq)) +
+    geom_tile(color = "white") +
+    geom_text(aes(label = Freq), size = 5) +
+    scale_fill_gradient(low = "white", high = "darkred") +
+    labs(title = title_text, x = "Aktual", y = "Prediksi") +
+    theme_minimal(base_size = 13)
+}
+
+```
+
+
+
+```{r}
+plot_cm_heatmap(conf_c50_smote_full, "Confusion Matrix - C5.0 (SMOTE Full)")
+plot_cm_heatmap(conf_logit_smote_full, "Confusion Matrix - Logistic (SMOTE Full)")
+plot_cm_heatmap(conf_knn_smote_full, "Confusion Matrix - KNN (SMOTE Full)")
+
+```
+
+```{r}
+plot_cm_heatmap(conf_c50_smote_14, "Confusion Matrix - C5.0 (SMOTE 14)")
+plot_cm_heatmap(conf_logit_smote_14, "Confusion Matrix - Logistic (SMOTE 14)")
+plot_cm_heatmap(conf_knn_smote_14, "Confusion Matrix - KNN (SMOTE 14)")
+
+```
+
+
+# Model terbaik
+
+```{r}
+importance_c50_smote_full <- C5imp(model_c50_smote_full)
+importance_df <- as.data.frame(importance_c50_smote_full)
+importance_df$Feature <- rownames(importance_df)
+importance_df <- importance_df[order(-importance_df$Overall), ]
+
+ggplot(importance_df, aes(x = reorder(Feature, Overall), y = Overall, fill = Overall)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_gradient(low = "skyblue", high = "darkblue") +
+  geom_text(aes(label = round(Overall, 2)), hjust = -0.2, size = 4) +
+  labs(title = "Feature Importance - C5.0 (SMOTE Full)",
+       x = "Fitur", y = "Skor Importance") +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
