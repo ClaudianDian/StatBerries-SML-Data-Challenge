@@ -102,7 +102,6 @@ Distribusi kelas stunting risk pada dataset tergolong tidak seimbang. Oleh karen
 **Accuracy**: Proporsi prediksi yang benar terhadap seluruh data uji.
 **F1-Score**: Harmonik rata-rata antara presisi dan recall, sangat berguna untuk data tidak seimbang.
 
-
 ## :bar_chart: Evaluasi
 
 ## :busts_in_silhouette: Team
