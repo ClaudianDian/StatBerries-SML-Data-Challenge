@@ -105,7 +105,7 @@ Setiap model dievaluasi menggunakan empat metrik utama:
 - **Kappa Statistic**
 - **Balanced Accuracy**
 - 
-### Skema 70:30
+### 📊 Skema 70:30
 #### 1. Full Fitur
 | Model            | Accuracy | F1 Score | Kappa | Balanced Accuracy |
 |------------------|----------|----------|--------|--------------------|
@@ -120,6 +120,9 @@ Setiap model dievaluasi menggunakan empat metrik utama:
 | Logistic (14 Fitur)  | 85.91%   | 0.915    | 0.503  | 71.39%             |
 | KNN (14 Fitur)       | 86.98%   | 0.915    | 0.633  | 83.72%             |
 
+Dari hasil perbandingan performa model dengan menggunakan skenario full fitur dan top 14 fitur diperoleh model terbaik adalah model C5.0 Full fitur dengan akurasi tertinggi yaitu sebesar 97.42%. Kemudian dilakukan analisis feature importance untuk mengidentifikasi variabel mana yang memberikan kontribusi terbesar dalam klasifikasi tingkat risiko stunting.
+<p align="center">
+  <img width="700" height="500" src="Image/Feature Importance 70-30.png">
 #### 3. Full Fitur with SMOTE
 | Model                  | Accuracy | F1 Score | Kappa | Balanced Accuracy |
 |------------------------|----------|----------|--------|--------------------|
@@ -134,8 +137,9 @@ Setiap model dievaluasi menggunakan empat metrik utama:
 | Logistic (SMOTE 14)     | 84.36%   | 0.8949   | 0.5939 | 84.30%             |
 | KNN (SMOTE 14)          | 81.49%   | 0.8708   | 0.5557 | 84.74%             |
 
-
-### Skema 80:20
+<p align="center">
+  <img width="700" height="500" src="Image/Feature Importance 70-30 + SMOTE.png">
+### 📊 Skema 80:20
 #### 1. Full Fitur
 | Model            | Accuracy | F1 Score | Kappa | Balanced Accuracy |
 |------------------|----------|----------|--------|--------------------|
@@ -150,6 +154,8 @@ Setiap model dievaluasi menggunakan empat metrik utama:
 | Logistic (14 Fitur)  | 87.15%   | 0.922    | 0.556  | 74.10%             |
 | KNN (14 Fitur)       | 86.44%   | 0.911    | 0.627  | 84.20%             |
 
+<p align="center">
+  <img width="700" height="500" src="Image/Feature Importance 80-20.png">
 #### 3. Full Fitur with SMOTE
 | Model                  | Accuracy | F1 Score | Kappa | Balanced Accuracy |
 |------------------------|----------|----------|--------|--------------------|
@@ -163,7 +169,8 @@ Setiap model dievaluasi menggunakan empat metrik utama:
 | **C5.0 (SMOTE 14 Fitur)** | 92.81%   | 0.9537   | 0.7928 | 91.92%             |
 | Logistic (SMOTE 14)     | 84.85%   | 0.8992   | 0.5975 | 83.76%             |
 | KNN (SMOTE 14)          | 82.27%   | 0.8773   | 0.5668 | 84.82%             |
-
+<p align="center">
+  <img width="700" height="500" src="Image/Feature Importance 80-20 + SMOTE.png">
 
 ## :busts_in_silhouette: Team
 
