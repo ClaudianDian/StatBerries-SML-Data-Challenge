@@ -158,6 +158,7 @@ Tabel di atas menunjukkan bahwa model C5.0 consistently memberikan performa terb
 | **C5.0 (14 Fitur)**  | 93.03%   | 0.956    | 0.790  | 89.50%             |
 | Logistic (14 Fitur)  | 87.15%   | 0.922    | 0.556  | 74.10%             |
 | KNN (14 Fitur)       | 86.44%   | 0.911    | 0.627  | 84.20%             |
+
 Model C5.0 dengan skenario full fitur menunjukkan performa terbaik dengan akurasi 97.05% dan F1 Score 0.981, mengungguli model lainnya. Hal ini menandakan bahwa penggunaan seluruh fitur memberikan kontribusi signifikan terhadap kemampuan model dalam mengklasifikasikan risiko stunting secara akurat.
 
 <p align="center">
@@ -182,9 +183,9 @@ Model C5.0 dengan SMOTE dan full fitur kembali menjadi yang terbaik dengan akura
 <p align="center">
   <img width="700" height="500" src="Image/Feature Importance 80-20 + SMOTE.jpg">
 
-Berdasarkan hasil pemodelan dengan total 24 skenario model, diperoleh model terbaik yaitu C5.0 dengan menggunakan full fitur dan SMOTE. Model ini mencatat akurasi tertinggi sebesar 97.23%, F1 Score 0.9823, Kappa 0.9171, dan balanced accuracy 96.42%, menjadikannya paling andal dalam membedakan kategori risiko stunting secara konsisten dan seimbang.
-Dari grafik feature importance model C5.0 (SMOTE Full), dapat disimpulkan bahwa beberapa variabel memiliki kontribusi dominan dalam klasifikasi risiko stunting yaitu Usia Anak 0-23 Bulan yang menjadi fitur paling penting (skor = 100). Hal ini menunjukkan bahwa usia sangat menentukan status pertumbuhan anak dan pengaruhnya terhadap risiko stunting. Kemudian Anak_Timbang_Rutin (95.3) menandakan bahwa kegiatan pemantauan tumbuh kembang anak melalui penimbangan rutin sangat krusial dalam mendeteksi risiko. Akses terhadap Air Minum Aman (82.41) dan Jlh_Anak_Punya_Akta_Lahir (78.17) serta Anak_Ukur_Panjang (76.68) dan Jlh_Anak_JamKes (75.65) memperkuat bahwa aspek pengukuran fisik serta jaminan kesehatan sangat mempengaruhi klasifikasi.
-Hal ini menunjukkan bahwa Intervensi kebijakan sebaiknya difokuskan pada aspek gizi anak usia dini, akses lingkungan sehat, dan cakupan layanan dasar seperti pemantauan tumbuh kembang dan jaminan kesehatan. Model machine learning seperti C5.0 dapat menjadi alat bantu strategis untuk pemetaan wilayah prioritas dan alokasi program pencegahan stunting berbasis data.
+Berdasarkan hasil pemodelan dengan total 24 skenario model, diperoleh model terbaik yaitu C5.0 dengan menggunakan full fitur dan SMOTE. Model ini mencatat akurasi tertinggi sebesar 97.23%, F1 Score 0.9823, Kappa 0.9171, dan balanced accuracy 96.42%, menjadikannya paling andal dalam membedakan kategori risiko stunting secara konsisten dan seimbang. <br>
+Dari grafik feature importance model C5.0 (SMOTE Full), dapat disimpulkan bahwa beberapa variabel memiliki kontribusi dominan dalam klasifikasi risiko stunting yaitu Usia Anak 0-23 Bulan yang menjadi fitur paling penting (skor = 100). Hal ini menunjukkan bahwa usia sangat menentukan status pertumbuhan anak dan pengaruhnya terhadap risiko stunting. Kemudian Anak_Timbang_Rutin (95.3) menandakan bahwa kegiatan pemantauan tumbuh kembang anak melalui penimbangan rutin sangat krusial dalam mendeteksi risiko. Akses terhadap Air Minum Aman (82.41) dan Jlh_Anak_Punya_Akta_Lahir (78.17) serta Anak_Ukur_Panjang (76.68) dan Jlh_Anak_JamKes (75.65) memperkuat bahwa aspek pengukuran fisik serta jaminan kesehatan sangat mempengaruhi klasifikasi.<br>
+Hal ini menunjukkan bahwa Intervensi kebijakan sebaiknya difokuskan pada aspek gizi anak usia dini, akses lingkungan sehat, dan cakupan layanan dasar seperti pemantauan tumbuh kembang dan jaminan kesehatan. Model machine learning seperti C5.0 dapat menjadi alat bantu strategis untuk pemetaan wilayah prioritas dan alokasi program pencegahan stunting berbasis data.<br>
 
 ## 📄 Kesimpulan
 1. Model C5.0 konsisten unggul dalam seluruh skenario, dengan performa akurasi dan F1 Score tertinggi. Model ini menunjukkan keunggulan baik dalam hal generalisasi maupun kestabilan prediksi.
