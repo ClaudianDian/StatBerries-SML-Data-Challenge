@@ -122,7 +122,7 @@ Setiap model dievaluasi menggunakan empat metrik utama:
 
 Dari hasil perbandingan performa model dengan menggunakan skenario full fitur dan top 14 fitur diperoleh model terbaik adalah model C5.0 Full fitur dengan akurasi tertinggi yaitu sebesar 97.42%. Kemudian dilakukan analisis feature importance untuk mengidentifikasi variabel mana yang memberikan kontribusi terbesar dalam klasifikasi tingkat risiko stunting.
 <p align="center">
-  <img width="700" height="500" src="Image/Feature Importance 70-30.png">
+  <img width="700" height="500" src="Image/Feature Importance 70-30.jpg">
 #### 3. Full Fitur with SMOTE
 | Model                  | Accuracy | F1 Score | Kappa | Balanced Accuracy |
 |------------------------|----------|----------|--------|--------------------|
@@ -138,7 +138,7 @@ Dari hasil perbandingan performa model dengan menggunakan skenario full fitur da
 | KNN (SMOTE 14)          | 81.49%   | 0.8708   | 0.5557 | 84.74%             |
 
 <p align="center">
-  <img width="700" height="500" src="Image/Feature Importance 70-30 + SMOTE.png">
+  <img width="700" height="500" src="Image/Feature Importance 70-30 + SMOTE.jpg">
 ### 📊 Skema 80:20
 #### 1. Full Fitur
 | Model            | Accuracy | F1 Score | Kappa | Balanced Accuracy |
@@ -155,7 +155,7 @@ Dari hasil perbandingan performa model dengan menggunakan skenario full fitur da
 | KNN (14 Fitur)       | 86.44%   | 0.911    | 0.627  | 84.20%             |
 
 <p align="center">
-  <img width="700" height="500" src="Image/Feature Importance 80-20.png">
+  <img width="700" height="500" src="Image/Feature Importance 80-20.jpg">
 #### 3. Full Fitur with SMOTE
 | Model                  | Accuracy | F1 Score | Kappa | Balanced Accuracy |
 |------------------------|----------|----------|--------|--------------------|
@@ -170,7 +170,7 @@ Dari hasil perbandingan performa model dengan menggunakan skenario full fitur da
 | Logistic (SMOTE 14)     | 84.85%   | 0.8992   | 0.5975 | 83.76%             |
 | KNN (SMOTE 14)          | 82.27%   | 0.8773   | 0.5668 | 84.82%             |
 <p align="center">
-  <img width="700" height="500" src="Image/Feature Importance 80-20 + SMOTE.png">
+  <img width="700" height="500" src="Image/Feature Importance 80-20 + SMOTE.jpg">
 
 ## :busts_in_silhouette: Team
 
