@@ -183,6 +183,26 @@ Model C5.0 dengan SMOTE dan full fitur kembali menjadi yang terbaik dengan akura
 <p align="center">
   <img width="700" height="500" src="Image/Feature Importance 80-20 +SMOTE.jpg">
 
+
+### 📊 Perbandingan Performa Model Berdasarkan Skema Split Data
+
+| Model                     | Split 70:30                     | Split 80:20                     |
+|                           |---------------------------------|---------------------------------|
+|                           | 70:30 Accuracy | 70:30 F1 Score | 80:20 Accuracy | 80:20 F1 Score |
+|---------------------------|----------------|----------------|----------------|----------------|
+| **C5.0 (Full)**           | **97.42%**     | **0.984**      | **97.05%**     | **0.981**      |
+| Logistic (Full)           | 90.48%         | 0.942          | 91.48%         | 0.947          |
+| KNN (Full)                | 84.02%         | 0.900          | 84.20%         | 0.901          |
+| **C5.0 (Top 14 Fitur)**   | 93.19%         | 0.957          | 93.03%         | 0.956          |
+| Logistic (Top 14)         | 85.91%         | 0.915          | 87.15%         | 0.922          |
+| KNN (Top 14)              | 86.98%         | 0.915          | 86.44%         | 0.911          |
+| **C5.0 (SMOTE Full)**     | 97.40%         | 0.9834         | 97.23%         | 0.9823         |
+| Logistic (SMOTE Full)     | 96.36%         | 0.9314         | 90.34%         | 0.9357         |
+| KNN (SMOTE Full)          | 72.34%         | 0.7991         | 70.82%         | 0.7855         |
+| **C5.0 (SMOTE 14 Fitur)** | 92.22%         | 0.9498         | 92.81%         | 0.9537         |
+| Logistic (SMOTE 14)       | 84.36%         | 0.8949         | 84.85%         | 0.8992         |
+| KNN (SMOTE 14)            | 81.49%         | 0.8708         | 82.27%         | 0.8773         |
+
 Berdasarkan hasil pemodelan dengan total 24 skenario model, diperoleh model terbaik yaitu C5.0 dengan menggunakan full fitur dan SMOTE. Model ini mencatat akurasi tertinggi sebesar 97.23%, F1 Score 0.9823, Kappa 0.9171, dan balanced accuracy 96.42%, menjadikannya paling andal dalam membedakan kategori risiko stunting secara konsisten dan seimbang. <br>
 Dari grafik feature importance model C5.0 (SMOTE Full), dapat disimpulkan bahwa beberapa variabel memiliki kontribusi dominan dalam klasifikasi risiko stunting yaitu Usia Anak 0-23 Bulan yang menjadi fitur paling penting (skor = 100). Hal ini menunjukkan bahwa usia sangat menentukan status pertumbuhan anak dan pengaruhnya terhadap risiko stunting. Kemudian Anak_Timbang_Rutin (95.3) menandakan bahwa kegiatan pemantauan tumbuh kembang anak melalui penimbangan rutin sangat krusial dalam mendeteksi risiko. Akses terhadap Air Minum Aman (82.41) dan Jlh_Anak_Punya_Akta_Lahir (78.17) serta Anak_Ukur_Panjang (76.68) dan Jlh_Anak_JamKes (75.65) memperkuat bahwa aspek pengukuran fisik serta jaminan kesehatan sangat mempengaruhi klasifikasi.<br>
 Hal ini menunjukkan bahwa Intervensi kebijakan sebaiknya difokuskan pada aspek gizi anak usia dini, akses lingkungan sehat, dan cakupan layanan dasar seperti pemantauan tumbuh kembang dan jaminan kesehatan. Model machine learning seperti C5.0 dapat menjadi alat bantu strategis untuk pemetaan wilayah prioritas dan alokasi program pencegahan stunting berbasis data.<br>
