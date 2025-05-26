@@ -187,7 +187,7 @@ Model C5.0 dengan SMOTE dan full fitur kembali menjadi yang terbaik dengan akura
 ### 📊 Perbandingan Performa Model Berdasarkan Skema Split Data
 
 | Model                     | Split 70:30                     | Split 80:20                     |
-|                           |---------------------------------|---------------------------------|
+|                ---------- |---------------------------------|---------------------------------|
 |                           | 70:30 Accuracy | 70:30 F1 Score | 80:20 Accuracy | 80:20 F1 Score |
 |---------------------------|----------------|----------------|----------------|----------------|
 | **C5.0 (Full)**           | **97.42%**     | **0.984**      | **97.05%**     | **0.981**      |
