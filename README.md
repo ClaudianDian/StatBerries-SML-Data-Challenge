@@ -183,8 +183,8 @@ Model C5.0 dengan SMOTE dan full fitur kembali menjadi yang terbaik dengan akura
 
 ### 📊 Model Terbaik
 
-| Model                     | Split 70:30 **Accuracy**   |    **F1 Score**         | Split 80:20 **Accuracy**     |    **F1 Score**        |
-|-------------------------- |---------------------------------|---------------------------------|
+| Model                     | 70:30 Accuracy | 70:30 F1 Score | 80:20 Accuracy | 80:20 F1 Score |
+|---------------------------|----------------|----------------|----------------|----------------|
 | **C5.0 (Full)**           | 97.05%         | 0.981          | **97.42%**     | **0.984**      |
 | Logistic (Full)           | 91.48%         | 0.947          | 90.48%         | 0.942          |
 | KNN (Full)                | 84.20%         | 0.901          | 84.02%         | 0.900          |
