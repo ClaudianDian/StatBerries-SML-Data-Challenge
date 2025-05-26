@@ -104,7 +104,7 @@ Setiap model dievaluasi menggunakan empat metrik utama:
 - **F1-Score**
 - **Kappa Statistic**
 - **Balanced Accuracy**
-- 
+  
 ### 📊 Skema 70:30
 #### 1. Full Fitur
 | Model            | Accuracy | F1 Score | Kappa | Balanced Accuracy |
