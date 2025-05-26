@@ -85,9 +85,11 @@ Distribusi kelas stunting risk pada dataset tergolong tidak seimbang. Oleh karen
 **1. K-Nearest Neighbour (KNN)**
 - Metode instance-based yang mengklasifikasikan data berdasarkan tetangga terdekatnya.
 - Hyperparameter tuning dilakukan terhadap nilai k menggunakan cross-validation.
+  
 **2. Regresi Logistik**
 - Model probabilistik yang mengasumsikan hubungan log-linear antara fitur dan log odds dari kelas target.
 - Dapat digunakan untuk interpretasi pengaruh fitur melalui koefisien.
+  
 **3. C5.0 Desicion Tree**
 - Pohon keputusan yang menghasilkan model interpretable dan mendukung feature importance scoring.
 - Digunakan juga dengan SMOTE untuk melihat pengaruh balancing terhadap performa.
