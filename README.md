@@ -107,18 +107,63 @@ Setiap model dievaluasi menggunakan empat metrik utama:
 - 
 ### Skema 70:30
 #### 1. Full Fitur
-<p align="center">
-  <img width="900" height="500" src="Image/Split70-30 (Full Fitur).png">
-</p>
+| Model            | Accuracy | F1 Score | Kappa | Balanced Accuracy |
+|------------------|----------|----------|--------|--------------------|
+| **C5.0 (Full)**  | 97.42%   | 0.984    | 0.923  | 96.28%             |
+| Logistic (Full)  | 90.48%   | 0.942    | 0.687  | 81.31%             |
+| KNN (Full)       | 84.02%   | 0.900    | 0.504  | 74.40%             |
+
 #### 2. Top 14 Fitur
+| Model                | Accuracy | F1 Score | Kappa | Balanced Accuracy |
+|----------------------|----------|----------|--------|--------------------|
+| **C5.0 (14 Fitur)**  | 93.19%   | 0.957    | 0.793  | 89.09%             |
+| Logistic (14 Fitur)  | 85.91%   | 0.915    | 0.503  | 71.39%             |
+| KNN (14 Fitur)       | 86.98%   | 0.915    | 0.633  | 83.72%             |
+
 #### 3. Full Fitur with SMOTE
+| Model                  | Accuracy | F1 Score | Kappa | Balanced Accuracy |
+|------------------------|----------|----------|--------|--------------------|
+| **C5.0 (SMOTE Full)**  | 97.40%   | 0.9834   | 0.9226 | 96.57%             |
+| Logistic (SMOTE Full)  | 96.36%   | 0.9314   | 0.7205 | 90.10%             |
+| KNN (SMOTE Full)       | 72.34%   | 0.7991   | 0.3843 | 75.09%             |
+
 #### 4. Top 14 Fitur with SMOTE
+| Model                   | Accuracy | F1 Score | Kappa | Balanced Accuracy |
+|-------------------------|----------|----------|--------|--------------------|
+| **C5.0 (SMOTE 14 Fitur)** | 92.22%   | 0.9498   | 0.7784 | 90.99%             |
+| Logistic (SMOTE 14)     | 84.36%   | 0.8949   | 0.5939 | 84.30%             |
+| KNN (SMOTE 14)          | 81.49%   | 0.8708   | 0.5557 | 84.74%             |
+
 
 ### Skema 80:20
 #### 1. Full Fitur
+| Model            | Accuracy | F1 Score | Kappa | Balanced Accuracy |
+|------------------|----------|----------|--------|--------------------|
+| **C5.0 (Full)**  | 97.05%   | 0.981    | 0.912  | 95.80%             |
+| Logistic (Full)  | 91.48%   | 0.947    | 0.727  | 84.00%             |
+| KNN (Full)       | 84.20%   | 0.901    | 0.515  | 75.20%             |
+
 #### 2. Top 14 Fitur
+| Model                | Accuracy | F1 Score | Kappa | Balanced Accuracy |
+|----------------------|----------|----------|--------|--------------------|
+| **C5.0 (14 Fitur)**  | 93.03%   | 0.956    | 0.790  | 89.50%             |
+| Logistic (14 Fitur)  | 87.15%   | 0.922    | 0.556  | 74.10%             |
+| KNN (14 Fitur)       | 86.44%   | 0.911    | 0.627  | 84.20%             |
+
 #### 3. Full Fitur with SMOTE
+| Model                  | Accuracy | F1 Score | Kappa | Balanced Accuracy |
+|------------------------|----------|----------|--------|--------------------|
+| **C5.0 (SMOTE Full)**  | 97.23%   | 0.9823   | 0.9171 | 96.42%             |
+| Logistic (SMOTE Full)  | 90.34%   | 0.9357   | 0.7438 | 91.98%             |
+| KNN (SMOTE Full)       | 70.82%   | 0.7855   | 0.3639 | 75.05%             |
+
 #### 4. Top 14 Fitur with SMOTE
+| Model                   | Accuracy | F1 Score | Kappa | Balanced Accuracy |
+|-------------------------|----------|----------|--------|--------------------|
+| **C5.0 (SMOTE 14 Fitur)** | 92.81%   | 0.9537   | 0.7928 | 91.92%             |
+| Logistic (SMOTE 14)     | 84.85%   | 0.8992   | 0.5975 | 83.76%             |
+| KNN (SMOTE 14)          | 82.27%   | 0.8773   | 0.5668 | 84.82%             |
+
 
 ## :busts_in_silhouette: Team
 
