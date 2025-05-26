@@ -32,9 +32,9 @@ Data yang digunakan dalam proyek ini diperoleh dari portal resmi pemerintah Indo
 Sumber data : https://data.go.id/dataset/dataset/data-stunting-2022
 ### Tahun dan Cakupan
 Tahun data : 2022  
-Cakupan geografis : Seluruh desa di Indonesia  
+Cakupan geografis : Provinsi di Pulau Jawa (DKI Jakarta, Banten, Jawa Barat, Jawa Tengah, DI Yogyakarta & Jawa Timur)  
 Unit observasi : Desa/Kelurahan  
-Jumlah observasi : 74305  
+Jumlah observasi : 22475  
 Jumlah variabel : 44  
 
 Data ini memuat informasi tahun 2022 pada tingkat desa/kelurahan, yang mencakup:
@@ -73,9 +73,33 @@ Dalam proses pelatihan dan pengujian model, digunakan dua skema pembagian data u
 **2. Skema 70:30**
  - 70% data latih digunakan untuk membangun model
  - 30% data uji digunakan untuk mengevaluasi performa generalisasi model
+### Skenario Pengaturan Fitur
+Kemudian setiap skema pembagian data diuji dalam dua skenario pengaturan fitur, yaitu:
+1. **Skenario Full Fitur**, menggunakan seluruh variabel yang ada dengan mengecualikan variabel yang mengandung informasi target secara eksplisit (untuk menghindari *data leakage*).
+2. **Skenario Top 14 Fitur**, menggunakan 14 fitur paling relevan berdasarkan korelasi dan interpretasi model setelah dilakukan pemodelan pada skenaro full fitur.
+
+### Perbandingan Imbalanced & Balanced Data
+Distribusi kelas stunting risk pada dataset tergolong tidak seimbang. Oleh karena itu dilakukan eksperimen dengan mengggunakan metode **SMOTE (Synthetic Minority Over-sampling Technique)** yang bertujuan untuk meningkatkan sensitivitas model terhadap kelas minoritas tanpa menurunkan performa secara keseluruhan.
+
+### Model yang Digunakan
+**1. K-Nearest Neighbour (KNN)**
+- Metode instance-based yang mengklasifikasikan data berdasarkan tetangga terdekatnya.
+- Hyperparameter tuning dilakukan terhadap nilai k menggunakan cross-validation.
+**2. Regresi Logistik**
+- Model probabilistik yang mengasumsikan hubungan log-linear antara fitur dan log odds dari kelas target.
+- Dapat digunakan untuk interpretasi pengaruh fitur melalui koefisien.
+**3. C5.0 Desicion Tree**
+- Pohon keputusan yang menghasilkan model interpretable dan mendukung feature importance scoring.
+- Digunakan juga dengan SMOTE untuk melihat pengaruh balancing terhadap performa.
+
 ### Preprocessing Data
 - Winsorizing diterapkan untuk membatasi pengaruh outlier ekstrim. Nilai-nilai ekstrim dari setiap variabel numerik dipotong pada persentil bawah dan atas.
 - Data bersifat imbalanced sehingga digunakan metode SMOTE (Synthetic Minority Over-sampling Technique) pada data latih.
+
+### Evaluasi Model
+**Accuracy**: Proporsi prediksi yang benar terhadap seluruh data uji.
+**F1-Score**: Harmonik rata-rata antara presisi dan recall, sangat berguna untuk data tidak seimbang.
+
 
 ## :bar_chart: Evaluasi
 
