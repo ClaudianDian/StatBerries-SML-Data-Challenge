@@ -98,11 +98,27 @@ Distribusi kelas stunting risk pada dataset tergolong tidak seimbang. Oleh karen
 - Winsorizing diterapkan untuk membatasi pengaruh outlier ekstrim. Nilai-nilai ekstrim dari setiap variabel numerik dipotong pada persentil bawah dan atas.
 - Data bersifat imbalanced sehingga digunakan metode SMOTE (Synthetic Minority Over-sampling Technique) pada data latih.
 
-### Evaluasi Model
-**Accuracy**: Proporsi prediksi yang benar terhadap seluruh data uji.
-**F1-Score**: Harmonik rata-rata antara presisi dan recall, sangat berguna untuk data tidak seimbang.
-
 ## :bar_chart: Evaluasi
+Setiap model dievaluasi menggunakan empat metrik utama:
+- **Accuracy**
+- **F1-Score**
+- **Kappa Statistic**
+- **Balanced Accuracy**
+- 
+### Skema 70:30
+#### 1. Full Fitur
+<p align="center">
+  <img width="900" height="500" src="Image/Split70-30 (Full Fitur).png">
+</p>
+#### 2. Top 14 Fitur
+#### 3. Full Fitur with SMOTE
+#### 4. Top 14 Fitur with SMOTE
+
+### Skema 80:20
+#### 1. Full Fitur
+#### 2. Top 14 Fitur
+#### 3. Full Fitur with SMOTE
+#### 4. Top 14 Fitur with SMOTE
 
 ## :busts_in_silhouette: Team
 
